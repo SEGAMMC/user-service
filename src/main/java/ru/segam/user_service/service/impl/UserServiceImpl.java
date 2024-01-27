@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(user);
             }
         } else {
-            throw new InvalidRequestException("Invalid data request");
+            throw new InvalidRequestException("");
         }
         return mapper.userToRegisterUserResponse(user);
     }
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
                 throw new UserNotFoundException(nickName);
             }
         } else {
-            throw new InvalidRequestException("Invalid data request");
+            throw new InvalidRequestException("");
         }
     }
 
@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
                 throw new UserNotFoundException(nickName);
             }
         } else {
-            throw new InvalidRequestException("Invalid data request");
+            throw new InvalidRequestException("");
         }
     }
 
@@ -167,7 +167,7 @@ public class UserServiceImpl implements UserService {
                 throw new UserNotFoundException(nickName);
             }
         } else {
-            throw new InvalidRequestException("Invalid data request");
+            throw new InvalidRequestException("");
         }
     }
 }
