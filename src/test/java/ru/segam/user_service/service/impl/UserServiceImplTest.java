@@ -30,7 +30,7 @@ class UserServiceImplTest {
                 .age(16)
                 .password("scZsc")
                 .build();
-        RegisterUserResponse userInDataActul = userService.registerNewUser(userRequest);
+        RegisterUserResponse userInDataActual = userService.registerNewUser(userRequest);
 
         RegisterUserResponse userExpected = RegisterUserResponse.builder()
                 .nickName("Criss")
@@ -39,7 +39,7 @@ class UserServiceImplTest {
                 .age(16)
                 .build();
 
-        assertEquals(userExpected, userInDataActul);
+        assertEquals(userExpected, userInDataActual);
     }
 
     @Test
