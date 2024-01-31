@@ -2,10 +2,8 @@ package ru.segam.user_service.repository;
 
 import java.util.List;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
 import ru.segam.user_service.entity.User;
 
-@Repository
 public interface UserRepository {
 
     /**
@@ -39,6 +37,14 @@ public interface UserRepository {
      * @return возвращает ответ true если в базе присутствует
      */
     boolean existsByNickname(String nickname);
+
+    /**
+     * Проверяет существует ли в базе пользователь стаким эмейлом
+     *
+     * @param email email пользователя
+     * @return возвращает ответ true если в базе присутствует
+     */
+    boolean existsByEmail(String email);
 
     /**
      * Обновляет информацию о пользователе

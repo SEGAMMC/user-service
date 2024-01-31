@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.segam.user_service.dto.request.AuthUserRequest;
 import ru.segam.user_service.dto.request.RegisterUserRequest;
+import ru.segam.user_service.dto.request.UpdatePasswordRequest;
 import ru.segam.user_service.dto.request.UpdateUserInfoRequest;
 import ru.segam.user_service.dto.response.AuthUserResponse;
 import ru.segam.user_service.dto.response.RegisterUserResponse;
+import ru.segam.user_service.dto.response.UpdatePasswordResponse;
 import ru.segam.user_service.dto.response.UpdateUserInfoResponse;
 import ru.segam.user_service.dto.response.UserResponse;
 import ru.segam.user_service.service.UserService;
@@ -61,10 +63,22 @@ public class UserController {
      * @param updateInfoRequest новая информация о пользователе
      * @return возвращает ответ с новой информацией о пользователе
      */
-    @PutMapping
+    @PutMapping("/info")
     public ResponseEntity<UpdateUserInfoResponse> updateUser(
             @RequestBody UpdateUserInfoRequest updateInfoRequest) {
         return ResponseEntity.ok(userService.updateUser(updateInfoRequest));
+    }
+
+    /**
+     * Изменение пароля на учетную запись в системе
+     *
+     * @param updatePassRequest изменение пароля пользователе
+     * @return возвращает ответ с измененным паролем о пользователе
+     */
+    @PutMapping()
+    public ResponseEntity<UpdatePasswordResponse> updatePasswordUser(
+            @RequestBody UpdatePasswordRequest updatePassRequest) {
+        return ResponseEntity.ok(userService.updateUser(updatePassRequest));
     }
 
     /**

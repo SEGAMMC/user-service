@@ -2,12 +2,12 @@ package ru.segam.user_service.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-public class SpringWebInitializer
+public class DispatcherConfig
         extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
     protected Class[] getServletConfigClasses() {
-        return new Class[] {SpringWebInitializer.class };
+        return new Class[] {SpringConfig.class };
     }
 
     @Override

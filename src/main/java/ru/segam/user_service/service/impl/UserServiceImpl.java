@@ -3,9 +3,11 @@ package ru.segam.user_service.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.segam.user_service.dto.request.AuthUserRequest;
@@ -21,15 +23,14 @@ import ru.segam.user_service.exception.UserNotFoundException;
 import ru.segam.user_service.mapper.UserMapper;
 import ru.segam.user_service.repository.UserRepository;
 import ru.segam.user_service.service.UserService;
-import ru.segam.user_service.util.PageImplCustom;
 import ru.segam.user_service.util.UserValidator;
+
 
 /**
  * Сервис для работы с пользователями
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -37,6 +38,16 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
 
     private final UserValidator validator;
+
+    @Autowired
+    public UserServiceImpl(
+            @Qualifier(value = "userRepositoryImplWithHibernate")
+            UserRepository userRepository,
+            UserMapper mapper, UserValidator validator) {
+        this.userRepository = userRepository;
+        this.mapper = mapper;
+        this.validator = validator;
+    }
 
     /**
      * Получение списка информации о пользователях постранично
@@ -51,7 +62,7 @@ public class UserServiceImpl implements UserService {
         for (User u : users) {
             usersResponse.add(mapper.userToUserResponse(u));
         }
-        return new PageImplCustom(usersResponse);
+        return new PageImpl(usersResponse);
     }
 
     /**
@@ -63,11 +74,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public RegisterUserResponse registerNewUser(RegisterUserRequest userRequest) {
         String nickName = userRequest.getNickName();
+        String email = userRequest.getEmail();
         User user;
         if (validator.isValid(userRequest)) {
             user = mapper.userRequestToUser(userRequest);
-            if (userRepository.existsByNickname(nickName)) {
-                throw new NickNameBusyException(nickName);
+            if (userRepository.existsByNickname(nickName)
+                    || userRepository.existsByEmail(email)
+            ) {
+                throw new NickNameBusyException(nickName + " " + email);
             } else {
                 userRepository.save(user);
             }
@@ -86,6 +100,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UpdatePasswordResponse updateUser(
             UpdatePasswordRequest updatePasswordRequest) {
+        //TODO проверить работу метода
         String nickName = updatePasswordRequest.getNickName();
         String pass = updatePasswordRequest.getPassword();
         String newPass = updatePasswordRequest.getNewPassword();
@@ -116,9 +131,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public UpdateUserInfoResponse updateUser(UpdateUserInfoRequest updateInfoRequest) {
         String nickName = updateInfoRequest.getNickName();
+        String email = updateInfoRequest.getEmail();
         String pass = updateInfoRequest.getPassword();
+
         if (validator.isValid(updateInfoRequest)) {
-            if (userRepository.existsByNickname(nickName)) {
+            if (userRepository.existsByNickname(nickName)
+                    || userRepository.existsByEmail(email)) {
                 User user = userRepository.findByNickname(nickName);
                 if (user.getPassword().equals(pass)) {
                     user.setFirstName(updateInfoRequest.getFirstName());

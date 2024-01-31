@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNickNameBusyException(
             final NickNameBusyException e) {
         ErrorResponse response = new ErrorResponse(CONFLICT,
-                "This nickname is busy. " + e.getMessage(),
+                "This nickname or email is busy. " + e.getMessage(),
                 LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.CONFLICT);
     }

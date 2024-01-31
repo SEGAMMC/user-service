@@ -12,7 +12,7 @@ import ru.segam.user_service.repository.UserRepository;
  * Класс для работы с базой данных с пользователями
  */
 
-@Repository
+@Repository("userRepositoryImpl")
 public class UserRepositoryImpl implements UserRepository {
 
     private final Map<String, User> users = new HashMap<>();
@@ -65,6 +65,17 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     /**
+     * Проверяет существует ли в базе пользователь стаким email
+     *
+     * @param email email пользователя
+     * @return возвращает ответ true если в базе присутствует
+     */
+    @Override
+    public boolean existsByEmail(String email) {
+        return false;
+    }
+
+    /**
      * Обновляет информацию о пользователе
      *
      * @param user пользователь (entity)
@@ -82,26 +93,26 @@ public class UserRepositoryImpl implements UserRepository {
     @SuppressWarnings("checkstyle:MagicNumber")
     @PostConstruct
     public void init() {
-        User user1 = new User(
-                "Bulochka", "Katya", "katya.bulochka@mail.com", 15, "qq123456789");
-        User user2 = new User(
-                "Killer777", "Nikolay", "kolya.killer@mail.com", 10, "xs9997777");
-        User user3 = new User(
-                "Joker", "Nick", "joker@mail.com", 20, "aaa112345655");
-        User user4 = new User(
-                "Nikoteen", "Aleksey", "aleksey@mail.com", 29, "zzz111zzz111");
-        User user5 = new User(
-                "Alcoholic", "Andrey", "andre.alco@mail.com", 13, "a7z89x5c6v2");
-        User user6 = new User(
-                "xXxSERGEYxXx", "Sergey", "sergey@mail.com", 23, "XX999XXX");
-        User user7 = new User(
-                "PoMiDoR", "Petr", "petya@mail.com", 26, "cc23664599");
-        User user8 = new User(
-                "mr.BROWN", "Alim", "alim.brown@mail.com", 33, "iq180");
-        User user9 = new User(
-                "Jimmy_Neyrone", "Jimmy", "jimm.king@mail.com", 12, "123456789");
-        User user10 = new User(
-                "Elya", "Elena", "elena.tomskaya@mail.com", 10, "555222333");
+        User user1 = new User(1, "Bulochka", "Katya",
+                "katya.bulochka@mail.com", 15, "qq123456789");
+        User user2 = new User(2, "Killer777", "Nikolay",
+                "kolya.killer@mail.com", 10, "xs9997777");
+        User user3 = new User(3, "Joker", "Nick",
+                "joker@mail.com", 20, "aaa112345655");
+        User user4 = new User(4, "Nikoteen", "Aleksey",
+                "aleksey@mail.com", 29, "zzz111zzz111");
+        User user5 = new User(5, "Alcoholic", "Andrey",
+                "andre.alco@mail.com", 13, "a7z89x5c6v2");
+        User user6 = new User(6, "xXxSERGEYxXx", "Sergey",
+                "sergey@mail.com", 23, "XX999XXX");
+        User user7 = new User(7, "PoMiDoR", "Petr",
+                "petya@mail.com", 26, "cc23664599");
+        User user8 = new User(8, "mr.BROWN", "Alim",
+                "alim.brown@mail.com", 33, "iq180");
+        User user9 = new User(9,"Jimmy_Neyrone", "Jimmy",
+                "jimm.king@mail.com", 12, "123456789");
+        User user10 = new User(10, "Elya", "Elena",
+                "elena.tomskaya@mail.com", 10, "555222333");
 
         users.put(user1.getNickName(), user1);
         users.put(user2.getNickName(), user2);
