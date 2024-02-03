@@ -49,7 +49,7 @@ public class UserRepositoryImpl implements UserRepository {
      * @return возвращает информацию о пользователе
      */
     @Override
-    public User findByNickname(String nickname) {
+    public User findByNickName(String nickname) {
         return users.get(nickname);
     }
 
@@ -60,7 +60,7 @@ public class UserRepositoryImpl implements UserRepository {
      * @return возвращает ответ true если в базе присутствует
      */
     @Override
-    public boolean existsByNickname(String nickname) {
+    public boolean existsByNickName(String nickname) {
         return users.containsKey(nickname);
     }
 

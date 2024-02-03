@@ -28,7 +28,7 @@ public interface UserRepository {
      * @param nickname ник пользователя
      * @return возвращает информацию о пользователе
      */
-    User findByNickname(String nickname);
+    User findByNickName(String nickname);
 
     /**
      * Проверяет существует ли в базе пользователь стаким ником
@@ -36,7 +36,7 @@ public interface UserRepository {
      * @param nickname ник пользователя
      * @return возвращает ответ true если в базе присутствует
      */
-    boolean existsByNickname(String nickname);
+    boolean existsByNickName(String nickname);
 
     /**
      * Проверяет существует ли в базе пользователь стаким эмейлом

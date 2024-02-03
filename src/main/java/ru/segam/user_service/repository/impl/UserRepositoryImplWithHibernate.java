@@ -62,7 +62,7 @@ public class UserRepositoryImplWithHibernate implements UserRepository {
      * @return возвращает информацию о пользователе
      */
     @Override
-    public User findByNickname(String nickname) {
+    public User findByNickName(String nickname) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         User user = session.createQuery(
@@ -81,7 +81,7 @@ public class UserRepositoryImplWithHibernate implements UserRepository {
      * @return возвращает ответ true если в базе присутствует
      */
     @Override
-    public boolean existsByNickname(String nickname) {
+    public boolean existsByNickName(String nickname) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         Query<Long> query = session.createQuery(
