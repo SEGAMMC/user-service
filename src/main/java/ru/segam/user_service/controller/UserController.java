@@ -39,7 +39,7 @@ public class UserController {
     public ResponseEntity<Page<UserResponse>> getUsers(
 //            @PageableDefault(page = 0, size = 20) @RequestBody Pageable pageable
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "3") int size
+            @RequestParam(defaultValue = "10") int size
     ) {
         Pageable paging = PageRequest.of(page, size);
         return ResponseEntity.ok(userService.getUsers(paging));

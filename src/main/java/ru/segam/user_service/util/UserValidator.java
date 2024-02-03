@@ -74,7 +74,7 @@ public class UserValidator {
     }
 
     private boolean notNull(String s) {
-        return s.trim() != null;
+        return true;
     }
 
     private boolean minSize(String s, int minSize) {

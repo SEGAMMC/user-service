@@ -1,45 +1,57 @@
 package ru.segam.user_service.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
 import ru.segam.user_service.dto.request.RegisterUserRequest;
 import ru.segam.user_service.dto.response.RegisterUserResponse;
+import ru.segam.user_service.entity.User;
 import ru.segam.user_service.exception.InvalidRequestException;
-import ru.segam.user_service.mapper.UserMapper;
-import ru.segam.user_service.repository.impl.UserRepositoryImpl;
+import ru.segam.user_service.repository.UserRepositoryByJPA;
 import ru.segam.user_service.service.UserService;
-import ru.segam.user_service.util.UserValidator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
+@ComponentScan(basePackages = "ru.segam.user_service")
 class UserServiceImplTest {
 
+    @Autowired
     private UserService userService;
 
-    public UserServiceImplTest() {
-        this.userService = new UserServiceImpl(new UserRepositoryImpl(),
-                new UserMapper(), new UserValidator());
-    }
+    @Autowired
+    private UserRepositoryByJPA userRepository;
 
     @Test
     void testRegisterNewUserThenAllOK1() {
         RegisterUserRequest userRequest = RegisterUserRequest.builder()
-                .nickName("Criss")
-                .firstName("Carrl")
-                .email("carl.coral@mail.com")
+                .nickName("Cristina")
+                .firstName("Carolina")
+                .email("carolina.coral@mail.com")
                 .age(16)
                 .password("scZsc")
                 .build();
+
+        User userFind = userRepository.findByNickName(userRequest.getNickName());
+        if(userFind!=null) {
+            userRepository.delete(userFind);
+        }
+
         RegisterUserResponse userInDataActual = userService.registerNewUser(userRequest);
 
         RegisterUserResponse userExpected = RegisterUserResponse.builder()
-                .nickName("Criss")
-                .firstName("Carrl")
-                .email("carl.coral@mail.com")
+                .nickName("Cristina")
+                .firstName("Carolina")
+                .email("carolina.coral@mail.com")
                 .age(16)
                 .build();
 
         assertEquals(userExpected, userInDataActual);
+
+
     }
 
     @Test
@@ -51,6 +63,11 @@ class UserServiceImplTest {
                 .age(35)
                 .password("qwerty")
                 .build();
+        User userFind = userRepository.findByNickName(userRequest.getNickName());
+        if(userFind!=null) {
+            userRepository.delete(userFind);
+        }
+
         RegisterUserResponse userInData = userService.registerNewUser(userRequest);
 
         RegisterUserResponse user = RegisterUserResponse.builder()

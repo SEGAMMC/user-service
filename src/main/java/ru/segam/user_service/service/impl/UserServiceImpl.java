@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,7 @@ import ru.segam.user_service.exception.InvalidRequestException;
 import ru.segam.user_service.exception.NickNameBusyException;
 import ru.segam.user_service.exception.UserNotFoundException;
 import ru.segam.user_service.mapper.UserMapper;
-import ru.segam.user_service.repository.UserRepository;
+import ru.segam.user_service.repository.UserRepositoryByJPA;
 import ru.segam.user_service.service.UserService;
 import ru.segam.user_service.util.UserValidator;
 
@@ -33,7 +32,7 @@ import ru.segam.user_service.util.UserValidator;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryByJPA userRepository;
 
     private final UserMapper mapper;
 
@@ -41,8 +40,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserServiceImpl(
-            @Qualifier(value = "userRepositoryImplWithHibernate")
-            UserRepository userRepository,
+            UserRepositoryByJPA userRepository,
             UserMapper mapper, UserValidator validator) {
         this.userRepository = userRepository;
         this.mapper = mapper;
@@ -57,7 +55,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Page<UserResponse> getUsers(Pageable pageable) {
-        List<User> users = userRepository.findAll(pageable);
+        List<User> users = userRepository.findAll(pageable).toList();
         List<UserResponse> usersResponse = new ArrayList<>();
         for (User u : users) {
             usersResponse.add(mapper.userToUserResponse(u));
@@ -78,7 +76,7 @@ public class UserServiceImpl implements UserService {
         User user;
         if (validator.isValid(userRequest)) {
             user = mapper.userRequestToUser(userRequest);
-            if (userRepository.existsByNickname(nickName)
+            if (userRepository.existsByNickName(nickName)
                     || userRepository.existsByEmail(email)
             ) {
                 throw new NickNameBusyException(nickName + " " + email);
@@ -95,7 +93,7 @@ public class UserServiceImpl implements UserService {
      * Изменение пароля конкретного пользователя
      *
      * @param updatePasswordRequest новая информация о пользователе
-     * @return возвращает ответ что пароль изменен
+     * @return возвращает ответ, что пароль изменен
      */
     @Override
     public UpdatePasswordResponse updateUser(
@@ -105,11 +103,14 @@ public class UserServiceImpl implements UserService {
         String pass = updatePasswordRequest.getPassword();
         String newPass = updatePasswordRequest.getNewPassword();
         if (validator.isValid(updatePasswordRequest)) {
-            if (userRepository.existsByNickname(nickName)) {
-                User user = userRepository.findByNickname(nickName);
+            if (userRepository.existsByNickName(nickName)) {
+                User user = userRepository.findByNickName(nickName);
+                if (user == null) {
+                    throw new UserNotFoundException(nickName);
+                }
                 if (user.getPassword().equals(pass)) {
                     user.setPassword(newPass);
-                    userRepository.update(user);
+                    userRepository.save(user);
                     return new UpdatePasswordResponse("Password updated");
                 } else {
                     throw new IncorrectPasswordException(nickName);
@@ -135,14 +136,17 @@ public class UserServiceImpl implements UserService {
         String pass = updateInfoRequest.getPassword();
 
         if (validator.isValid(updateInfoRequest)) {
-            if (userRepository.existsByNickname(nickName)
+            if (userRepository.existsByNickName(nickName)
                     || userRepository.existsByEmail(email)) {
-                User user = userRepository.findByNickname(nickName);
+                User user = userRepository.findByNickName(nickName);
+                if (user == null) {
+                    throw new UserNotFoundException(nickName);
+                }
                 if (user.getPassword().equals(pass)) {
                     user.setFirstName(updateInfoRequest.getFirstName());
                     user.setEmail(updateInfoRequest.getEmail());
                     user.setAge(updateInfoRequest.getAge());
-                    userRepository.update(user);
+                    userRepository.save(user);
                     return UpdateUserInfoResponse.builder()
                             .nickName(updateInfoRequest.getNickName())
                             .firstName(updateInfoRequest.getFirstName())
@@ -171,8 +175,11 @@ public class UserServiceImpl implements UserService {
         String nickName = authUserRequest.getNickName();
         String pass = authUserRequest.getPassword();
         if (validator.isValid(authUserRequest)) {
-            if (userRepository.existsByNickname(nickName)) {
-                User user = userRepository.findByNickname(nickName);
+            if (userRepository.existsByNickName(nickName)) {
+                User user = userRepository.findByNickName(nickName);
+                if (user == null) {
+                    throw new UserNotFoundException(nickName);
+                }
                 if (user.getPassword().equals(pass)) {
                     return AuthUserResponse.builder()
                             .secret("user")
